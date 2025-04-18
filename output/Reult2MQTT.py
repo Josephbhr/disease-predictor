@@ -29,7 +29,7 @@ client = paho.Client(client_id = client_id, userdata=None, protocol=paho.MQTTv5)
 
 # Connect to the broker
 client.username_pw_set(USERNAME, PASSWORD)  
-#client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
+client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
 
 # Connect to your HiveMQ Cloud cluster
 client.connect(MQTT_CLUSTER_URL, port = 8883) 
@@ -37,21 +37,32 @@ client.connect(MQTT_CLUSTER_URL, port = 8883)
 client.loop_start()
 
 
-# Publish each row's forecast data to the respective topics
-for index, row in long_term_data.iterrows():
-    if index > 30:
-        break 
-    # Create payloads (you can include more details like timestamp if needed)
-    payload_RF = f"{row['RandomForest_Prediction']}"
-    payload_LR = f"{row['LogisticRegression_Prediction']}"
+# # Publish each row's forecast data to the respective topics
+# for index, row in long_term_data.iterrows():
+#     if index > 0:
+#         break 
+#     # Create payloads (you can include more details like timestamp if needed)
+#     payload_RF = f"{row['RandomForest_Prediction']}"
+#     payload_LR = f"{row['LogisticRegression_Prediction']}"
 
-    # Publish to the topics
-    client.publish(topic_RF, payload_RF)
-    client.publish(topic_LR, payload_LR)
+#     # Publish to the topics
+#     client.publish(topic_RF, payload_RF)
+#     client.publish(topic_LR, payload_LR)
 
-    print(f"Published row {index}: RF={payload_RF}, LR={payload_LR}")
+#     print(f"Published row {index}: RF={payload_RF}, LR={payload_LR}")
 
-    time.sleep(0.5)
+#     time.sleep(0.5)
+
+try:
+    with open("../output/simulated_user_long_term.json", "r") as f:
+        payload = json.load(f)
+        message = json.dumps(payload)
+        client.publish("COMP4436/Project/LONGTERM", payload=message, qos=1)
+        print(f"Publishing to COMP4436/Project/LONGTERM: {message}")
+except Exception as e:
+    print("Error reading or sending long-term analysis:", e)
+
+
 
 try:
     # Read the JSON file 
@@ -63,7 +74,7 @@ try:
         message = json.dumps(record)
         result = client.publish("COMP4436/Project/LIVE", payload=message, qos=1)
         print(f"Publishing to COMP4436/Project/LIVE: {message}")
-        time.sleep(0.5)  
+        time.sleep(1.5)  
 except Exception as e:
     print("Error reading or sending live-data alert:", e)
 
