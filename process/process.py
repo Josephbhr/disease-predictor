@@ -5,17 +5,19 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, accuracy_score
 import random
 
 # Load the dataset
-raw_data = pd.read_csv('../dataset/heart.csv')
+raw_data = pd.read_csv('dataset/heart.csv')
 
 
 def encode(data):
     # One-hot encode categorical variables
-    data_encoded = pd.get_dummies(data, columns=['cp', 'restecg', 'slope', 'thal'], drop_first=True)
+    data_encoded = pd.get_dummies(data, columns=['cp', 'restecg', 'slope', 'thal'], drop_first=True, dtype=int)
     return data_encoded
 
 def normalize(data_encoded):
@@ -96,10 +98,10 @@ print(classification_report(y_test, y_pred))
 prediction = model.predict(sample_user)
 risk = "High Risk" if prediction[0] == 1 else "Low Risk"
 
-print("Long-Term Prediction for this User:", risk)
+print("Long-Term Prediction for this User using Random Forest:", risk)
 
 
-model2 = LogisticRegression(C=0.1)
+model2 = LogisticRegression()
 model2.fit(X_train, y_train)
 
 y_pred2 = model2.predict(X_test)
@@ -109,18 +111,48 @@ print(classification_report(y_test, y_pred2))
 prediction = model2.predict(sample_user)
 risk = "High Risk" if prediction[0] == 1 else "Low Risk"
 
-print("Long-Term Prediction for this User:", risk)
+print("Long-Term Prediction for this User using Linear Regression:", risk)
+
+
+model3 = GaussianProcessClassifier()
+model3.fit(X_train, y_train)
+
+y_pred3 = model3.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred3))
+print(classification_report(y_test, y_pred3))
+
+prediction = model3.predict(sample_user)
+risk = "High Risk" if prediction[0] == 1 else "Low Risk"
+
+print("Long-Term Prediction for this User using Gaussian Process:", risk)
+
+
+model4 = KNeighborsClassifier(n_neighbors=3)
+model4.fit(X_train, y_train)
+
+y_pred4 = model4.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred4))
+print(classification_report(y_test, y_pred4))
+
+prediction = model4.predict(sample_user)
+risk = "High Risk" if prediction[0] == 1 else "Low Risk"
+
+print("Long-Term Prediction for this User using K-Neighbours:", risk)
 
 # Predict on the full dataset X
 rf_predictions = model.predict(X)
 lr_predictions = model2.predict(X)
+gp_predictions = model3.predict(X)
+kn_predictions = model4.predict(X)
 
 # Prepare DataFrame with both models' predictions
 results_df = pd.DataFrame({
     'RandomForest_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in rf_predictions],
-    'LogisticRegression_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in lr_predictions]
+    'LogisticRegression_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in lr_predictions],
+    'GaussianProcess_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in gp_predictions],
+    'KNeighbours_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in kn_predictions]
 })
 
 # Save to CSV
-results_df.to_csv('../output/long_term_prediction_results.csv', index=False)
+results_df.to_csv('output/long_term_prediction_results.csv', index=False)
 print("All long-term prediction results saved to long_term_prediction_results.csv")
