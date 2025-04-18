@@ -10,7 +10,7 @@ from sklearn.metrics import classification_report, accuracy_score
 import random
 
 # Load the dataset
-raw_data = pd.read_csv('../dataset/heart.csv')
+raw_data = pd.read_csv('dataset/heart.csv')
 
 
 def encode(data):
@@ -122,5 +122,5 @@ results_df = pd.DataFrame({
 })
 
 # Save to CSV
-results_df.to_csv('../output/long_term_prediction_results.csv', index=False)
+results_df.to_csv('long_term_prediction_results.csv', index=False)
 print("All long-term prediction results saved to long_term_prediction_results.csv")

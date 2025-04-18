@@ -51,6 +51,7 @@ for index, row in long_term_data.iterrows():
 
     print(f"Published row {index}: RF={payload_RF}, LR={payload_LR}")
 
+    # Optional: wait a bit between rows
     time.sleep(0.5)
 
 try:

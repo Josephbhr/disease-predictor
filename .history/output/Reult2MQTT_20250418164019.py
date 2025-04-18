@@ -16,6 +16,7 @@ long_term_data = pd.read_csv(long_term_csv_file)
 
 # MQTT Broker settings (Use HiveMQ Cloud as Learned in IC Labs)
 MQTT_CLUSTER_URL = "5b98359e206d4a2abba0bbce72be4559.s1.eu.hivemq.cloud"
+MQTT_CLUSTER_ID = "5b98359e206d4a2abba0bbce72be4559"
 USERNAME = "Joseph"
 PASSWORD = "COMP4436!Great"
 
@@ -24,12 +25,12 @@ topic_RF = "COMP4436/Project/RF"
 topic_LR = "COMP4436/Project/LR"
 topic_live = "COMP4436/Project/LIVE"
 client_id = f'COMP4436-Project-{random.randint(0, 100)}'
-client = paho.Client(client_id = client_id, userdata=None, protocol=paho.MQTTv5)
+client = paho.Client(MQTT_CLUSTER_ID, userdata=None, protocol=paho.MQTTv5)
 
 
 # Connect to the broker
 client.username_pw_set(USERNAME, PASSWORD)  
-#client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
+client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
 
 # Connect to your HiveMQ Cloud cluster
 client.connect(MQTT_CLUSTER_URL, port = 8883) 
@@ -39,8 +40,6 @@ client.loop_start()
 
 # Publish each row's forecast data to the respective topics
 for index, row in long_term_data.iterrows():
-    if index > 30:
-        break 
     # Create payloads (you can include more details like timestamp if needed)
     payload_RF = f"{row['RandomForest_Prediction']}"
     payload_LR = f"{row['LogisticRegression_Prediction']}"
@@ -51,6 +50,7 @@ for index, row in long_term_data.iterrows():
 
     print(f"Published row {index}: RF={payload_RF}, LR={payload_LR}")
 
+    # Optional: wait a bit between rows
     time.sleep(0.5)
 
 try:

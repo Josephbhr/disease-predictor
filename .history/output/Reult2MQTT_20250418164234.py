@@ -29,7 +29,7 @@ client = paho.Client(client_id = client_id, userdata=None, protocol=paho.MQTTv5)
 
 # Connect to the broker
 client.username_pw_set(USERNAME, PASSWORD)  
-#client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
+client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
 
 # Connect to your HiveMQ Cloud cluster
 client.connect(MQTT_CLUSTER_URL, port = 8883) 
@@ -51,6 +51,7 @@ for index, row in long_term_data.iterrows():
 
     print(f"Published row {index}: RF={payload_RF}, LR={payload_LR}")
 
+    # Optional: wait a bit between rows
     time.sleep(0.5)
 
 try:
