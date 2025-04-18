@@ -110,3 +110,17 @@ prediction = model2.predict(sample_user)
 risk = "High Risk" if prediction[0] == 1 else "Low Risk"
 
 print("Long-Term Prediction for this User:", risk)
+
+# Predict on the full dataset X
+rf_predictions = model.predict(X)
+lr_predictions = model2.predict(X)
+
+# Prepare DataFrame with both models' predictions
+results_df = pd.DataFrame({
+    'RandomForest_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in rf_predictions],
+    'LogisticRegression_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in lr_predictions]
+})
+
+# Save to CSV
+results_df.to_csv('all_prediction_results.csv', index=False)
+print("All prediction results saved to all_prediction_results.csv")
