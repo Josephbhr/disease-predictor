@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split,cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
@@ -85,72 +85,50 @@ print(sample_dataset)
 sample_user = sample_dataset.iloc[-1]
 sample_user = sample_user.to_frame().T
 
-print(sample_user)
+
+models = {
+    'Random Forest': RandomForestClassifier(random_state=42),
+    'Logistic Regression': LogisticRegression(),
+    'Gaussian Process': GaussianProcessClassifier(),
+    'K-Neighbors': KNeighborsClassifier(n_neighbors=3)
+}
+
+accuracy_results = {model_name: [] for model_name in models.keys()}
+
+for model_name, model in models.items():
+    model.fit(X_train, y_train)
+    scores = cross_val_score(model, X_train, y_train, cv=5)
+    accuracy_results[model_name].extend(scores)
+
+# Plotting the diagram of model accuracies during training
+plt.figure(figsize=(12, 6))
+for model_name, accuracies in accuracy_results.items():
+    plt.plot(accuracies, label=model_name, marker='o')
+
+plt.title('Model Accuracy on Training Set')
+plt.xlabel('Iteration')
+plt.ylabel('Accuracy')
+plt.ylim(0, 1)
+plt.xticks(range(len(accuracy_results['Random Forest'])))
+plt.legend()
+plt.grid()
+plt.show()
+
+predictions = [None] * 4
+# Testing and reporting results
+for index, model_name in enumerate(models):
+    predictions[index] = models[model_name].predict(X_test)
+    print(f"{model_name} Accuracy:", accuracy_score(y_test, predictions[index]))
+    print(classification_report(y_test, predictions[index]))
 
 
-model = RandomForestClassifier(random_state=42)
-model.fit(X_train, y_train)
-
-y_pred = model.predict(X_test)
-print("Accuracy:", accuracy_score(y_test, y_pred))
-print(classification_report(y_test, y_pred))
-
-prediction = model.predict(sample_user)
-risk = "High Risk" if prediction[0] == 1 else "Low Risk"
-
-print("Long-Term Prediction for this User using Random Forest:", risk)
-
-
-model2 = LogisticRegression()
-model2.fit(X_train, y_train)
-
-y_pred2 = model2.predict(X_test)
-print("Accuracy:", accuracy_score(y_test, y_pred2))
-print(classification_report(y_test, y_pred2))
-
-prediction = model2.predict(sample_user)
-risk = "High Risk" if prediction[0] == 1 else "Low Risk"
-
-print("Long-Term Prediction for this User using Linear Regression:", risk)
-
-
-model3 = GaussianProcessClassifier()
-model3.fit(X_train, y_train)
-
-y_pred3 = model3.predict(X_test)
-print("Accuracy:", accuracy_score(y_test, y_pred3))
-print(classification_report(y_test, y_pred3))
-
-prediction = model3.predict(sample_user)
-risk = "High Risk" if prediction[0] == 1 else "Low Risk"
-
-print("Long-Term Prediction for this User using Gaussian Process:", risk)
-
-
-model4 = KNeighborsClassifier(n_neighbors=3)
-model4.fit(X_train, y_train)
-
-y_pred4 = model4.predict(X_test)
-print("Accuracy:", accuracy_score(y_test, y_pred4))
-print(classification_report(y_test, y_pred4))
-
-prediction = model4.predict(sample_user)
-risk = "High Risk" if prediction[0] == 1 else "Low Risk"
-
-print("Long-Term Prediction for this User using K-Neighbours:", risk)
-
-# Predict on the full dataset X
-rf_predictions = model.predict(X)
-lr_predictions = model2.predict(X)
-gp_predictions = model3.predict(X)
-kn_predictions = model4.predict(X)
 
 # Prepare DataFrame with both models' predictions
 results_df = pd.DataFrame({
-    'RandomForest_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in rf_predictions],
-    'LogisticRegression_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in lr_predictions],
-    'GaussianProcess_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in gp_predictions],
-    'KNeighbours_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in kn_predictions]
+    'RandomForest_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in predictions[0]],
+    'LogisticRegression_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in predictions[1]],
+    'GaussianProcess_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in predictions[2]],
+    'KNeighbours_Prediction': ['High Risk' if p == 1 else 'Low Risk' for p in predictions[3]]
 })
 
 # Save to CSV
