@@ -153,7 +153,7 @@
         "name": "HiveMQ Cloud",
         "broker": "5b98359e206d4a2abba0bbce72be4559.s1.eu.hivemq.cloud",
         "port": "8883",
-        "tls": "",
+        "tls": "tls_config",
         "clientid": "",
         "autoConnect": true,
         "usetls": true,
@@ -175,7 +175,11 @@
         "willPayload": "",
         "willMsg": {},
         "userProps": "",
-        "sessionExpiry": ""
+        "sessionExpiry": "",
+        "credentials": {
+          "user": "Joseph",
+          "password": "COMP4436!Great"
+        }
     },
     {
         "id": "7489d7efba9943b5",
