@@ -1,0 +1,23 @@
+{
+    "user_profile": {
+        "age": 53.41835816353883,
+        "sex": 0.0,
+        "cp": 1.0,
+        "trestbps": 117.40508643803611,
+        "chol": 282.96860884302464,
+        "fbs": 1.0,
+        "restecg": 0.0,
+        "thalach": 169.62749011587084,
+        "exang": 1.0,
+        "oldpeak": -0.21796073885116685,
+        "slope": 2.0,
+        "ca": 2.0,
+        "thal": 0.0
+    },
+    "RandomForest_RiskScore": "47.00%",
+    "LogisticRegression_RiskScore": "100.00%",
+    "Predicted_Risk": "High Risk",
+    "Contributing_Risk_Factors": [
+        "chol high (283.0)"
+    ]
+}
