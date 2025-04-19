@@ -1,9 +1,8 @@
----
 
-```markdown
+
 # 🧠 Disease Predictor: Long-Term Health Risk Forecasting System
 
-Welcome to the **Disease Predictor** project — a smart health system that uses simulated patient data and machine learning to predict long-term cardiovascular risks. The project includes an interactive dashboard powered by **Node-RED**, real-time messaging via **MQTT**, and predictive modeling using **Random Forest** and **Logistic Regression**.
+Welcome to the **Disease Predictor** project — a smart health system that uses simulated patient data and machine learning to predict long-term cardiovascular risks. The project includes an interactive dashboard powered by **Node-RED**, real-time messaging via **MQTT**, and predictive modeling using **Random Forest**, **Logistic Regression**, **KNN**, and **Gaussian Processing**.
 
 ---
 
@@ -151,7 +150,7 @@ We’re happy to help and truly appreciate your feedback!
 ---
 
 Thanks for exploring our project! 
-```
+
 
 
 
