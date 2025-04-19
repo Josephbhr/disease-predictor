@@ -6,9 +6,13 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Load and preprocess data
-raw_data = pd.read_csv('../dataset/heart.csv')
+raw_data_path = os.path.join(BASE_DIR, "..", "dataset/heart.csv")
+raw_data = pd.read_csv(raw_data_path)
 
 def encode(data):
     return pd.get_dummies(data, columns=['cp', 'restecg', 'slope', 'thal'], drop_first=True)
@@ -81,7 +85,9 @@ output = {
 }
 
 # Save to JSON
-with open("../output/simulated_user_long_term.json", "w") as f:
+
+output_json_path = os.path.join(BASE_DIR, "..", "output/long_term_report.json")
+with open(output_json_path, "w") as f:
     json.dump(output, f, indent=4)
 
-print("Simulated user prediction saved to simulated_user_long_term.json")
+print("Sample user prediction saved to long_term_report.json")
