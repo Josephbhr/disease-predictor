@@ -202,13 +202,25 @@
         "autoUnsubscribe": true,
         "birthTopic": "",
         "birthQos": "0",
+        "birthRetain": "false",
         "birthPayload": "",
+        "birthMsg": {},
         "closeTopic": "",
         "closePayload": "",
+        "closeMsg": {},
         "willTopic": "",
         "willQos": "0",
-        "willPayload": ""
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": "",
+        "credentials": {
+          "user": "Joseph",
+          "password": "COMP4436!Great"
+        }
     },
+
     {
         "id": "cbf2bc9c7ab35d1f",
         "type": "ui_group",
