@@ -1,0 +1,261 @@
+[
+    {
+        "id": "f1a2c8e1d25a32f3",
+        "type": "tab",
+        "label": "COMP4436 MQTT Dashboard",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "0cb91f2f07110e91",
+        "type": "mqtt in",
+        "z": "f1a2c8e1d25a32f3",
+        "name": "LIVE Data",
+        "topic": "COMP4436/Project/LIVE",
+        "qos": "1",
+        "datatype": "json",
+        "broker": "16cda1e0783f9c39",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 120,
+        "y": 100,
+        "wires": [
+            [
+                "3f9e7a93f69de359",
+                "ab2260edc6c59553"
+            ]
+        ]
+    },
+    {
+        "id": "3f9e7a93f69de359",
+        "type": "ui_template",
+        "z": "f1a2c8e1d25a32f3",
+        "group": "7489d7efba9943b5",
+        "name": "Vitals Display",
+        "order": 1,
+        "width": "12",
+        "height": "6",
+        "format": "<table class=\"table\">\n    <tr>\n        <th>Time</th>\n        <th>HR</th>\n        <th>SpO₂</th>\n        <th>BP</th>\n        <th>Temp</th>\n        <th>Activity</th>\n        <th>Alerts</th>\n    </tr>\n    <tr>\n        <td>{{msg.payload.timestamp}}</td>\n        <td>{{msg.payload.heart_rate}}</td>\n        <td>{{msg.payload.oxygen_saturation}}</td>\n        <td>{{msg.payload.blood_pressure}}</td>\n        <td>{{msg.payload.temperature}}</td>\n        <td>{{msg.payload.activity_level}}</td>\n        <td><span ng-repeat=\"a in msg.payload.combined_alerts\">🔔 {{a}}<br/></span></td>\n    </tr>\n</table>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 390,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ab2260edc6c59553",
+        "type": "function",
+        "z": "f1a2c8e1d25a32f3",
+        "name": "Live Alert Notifier",
+        "func": "if (msg.payload.combined_alerts && msg.payload.combined_alerts[0] !== \"Normal on all vital metrics\") {\n    return {\n        payload: `⚠️ ALERT: ${msg.payload.combined_alerts.join(\", \")}`\n    };\n}\nreturn null;\n\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 160,
+        "wires": [
+            [
+                "93930ea2ff4c63c4"
+            ]
+        ]
+    },
+    {
+        "id": "93930ea2ff4c63c4",
+        "type": "ui_toast",
+        "z": "f1a2c8e1d25a32f3",
+        "position": "top right",
+        "displayTime": "6",
+        "highlight": "red",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "Live Alert Toast",
+        "x": 650,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "30f21572d936abc5",
+        "type": "mqtt in",
+        "z": "f1a2c8e1d25a32f3",
+        "name": "Long-Term MQTT",
+        "topic": "COMP4436/Project/LONGTERM",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "mqtt_hivemq",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 400,
+        "wires": [
+            [
+                "972e2243740fa5be",
+                "c7074612427a0598"
+            ]
+        ]
+    },
+    {
+        "id": "c7074612427a0598",
+        "type": "ui_template",
+        "z": "f1a2c8e1d25a32f3",
+        "group": "cbf2bc9c7ab35d1f",
+        "name": "Long-Term Dashboard",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<div style=\"padding:10px\">\n    <h3>Long-Term Health Risk Prediction</h3>\n    <p><strong>Predicted Risk: {{msg.payload.Predicted_Risk}}</p>\n    <ul>\n        <li>Random Forest Prediction Probability: {{msg.payload.RandomForest_RiskScore}}</li>\n        <li>Logistic Regression Prediction Probability: {{msg.payload.LogisticRegression_RiskScore}}</li>\n    </ul>\n    \n    <hr>\n    <h4>User Profile</h4>\n    <ul>\n        <li>Age: {{msg.payload.user_profile.age}}</li>\n        <li>Sex: {{msg.payload.user_profile.sex}}</li>\n        <li>Chest Pain Type: {{msg.payload.user_profile.cp}}</li>\n        <li>Blood Pressure: {{msg.payload.user_profile.trestbps}}</li>\n        <li>Cholesterol: {{msg.payload.user_profile.chol}}</li>\n        <li>Max Heart Rate: {{msg.payload.user_profile.thalach}}</li>\n        <li>Fasting Blood Sugar: {{msg.payload.user_profile.fbs}}</li>\n    </ul>\n    <h4>Key Risk Factors</h4>\n    <ul>\n        {{msg.payload.Contributing_Risk_Factors}}\n    </ul>\n\n\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 740,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "972e2243740fa5be",
+        "type": "debug",
+        "z": "f1a2c8e1d25a32f3",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "16cda1e0783f9c39",
+        "type": "mqtt-broker",
+        "name": "HiveMQ Cloud",
+        "broker": "5b98359e206d4a2abba0bbce72be4559.s1.eu.hivemq.cloud",
+        "port": "8883",
+        "tls": "tls_config",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": "5",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": "",
+        "credentials": {
+          "user": "Joseph",
+          "password": "COMP4436!Great"
+        }
+    },
+    {
+        "id": "7489d7efba9943b5",
+        "type": "ui_group",
+        "name": "Live Monitor",
+        "tab": "40db0a264e4bd6b7",
+        "order": 1,
+        "disp": true,
+        "width": 12
+    },
+    {
+        "id": "mqtt_hivemq",
+        "type": "mqtt-broker",
+        "name": "HiveMQ Cloud",
+        "broker": "5b98359e206d4a2abba0bbce72be4559.s1.eu.hivemq.cloud",
+        "port": "8883",
+        "tls": "tls_config",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": "5",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": "",
+        "credentials": {
+          "user": "Joseph",
+          "password": "COMP4436!Great"
+        }
+    },
+
+    {
+        "id": "cbf2bc9c7ab35d1f",
+        "type": "ui_group",
+        "name": "Long-Term Predictions for Heart Disease",
+        "tab": "40db0a264e4bd6b7",
+        "order": 2,
+        "disp": true,
+        "width": 12,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "40db0a264e4bd6b7",
+        "type": "ui_tab",
+        "name": "COMP4436 Dashboard",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "tls_config",
+        "type": "tls-config",
+        "name": "HiveMQ TLS",
+        "cert": "",
+        "key": "",
+        "ca": "",
+        "certname": "",
+        "keyname": "",
+        "caname": "",
+        "servername": "",
+        "verifyservercert": true
+    }
+]
